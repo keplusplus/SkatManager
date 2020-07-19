@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/Widget.AppCompat.Spinner.Underlined"
+        android:id="@+id/spinner_players"/>
+
+    <!--<Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/play_colors"
+        android:id="@+id/spinner_play_colors"
+        style="@style/Widget.AppCompat.Spinner.Underlined"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"/>-->
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/points"
+        android:id="@+id/points_edit_text"
+        android:inputType="number"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <RadioGroup
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/radiogroup_winloss">
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="10dp"
+                    android:id="@+id/radio_win"
+                    android:checked="true"
+                    android:text="Gewonnen"/>
+
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/radio_loss"
+                    android:checked="false"
+                    android:text="Verloren"/>
+
+
+        </RadioGroup>
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        style="@style/Widget.AppCompat.Button.Colored"
+        android:text="@string/insert"
+        android:onClick="onInsert"/>
+
+</LinearLayout>

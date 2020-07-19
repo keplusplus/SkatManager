@@ -1,0 +1,46 @@
+<resources>
+    <string-array name="play_colors">
+        <item>Kreuz</item>
+        <item>Pik</item>
+        <item>Herz</item>
+        <item>Karo</item>
+    </string-array>
+
+    <string name="app_name">SkatManager</string>
+    <string name="create_new_list">Neue Liste erstellen</string>
+    <string name="continue_existing_list">Existierende Liste fortführen</string>
+    <string name="radio_skat">Skat</string>
+    <string name="radio_doppelkopf">Doppelkopf</string>
+    <string name="player_1">Spieler 1</string>
+    <string name="player_2">Spieler 2</string>
+    <string name="player_3">Spieler 3</string>
+    <string name="player_4">Spieler 4</string>
+    <string name="player_5">Spieler 5</string>
+    <string name="player_6">Spieler 6</string>
+    <string name="remove_player">Spieler entfernen</string>
+    <string name="add_player">Spieler hinzufügen</string>
+    <string name="button_confirm">Erstellen</string>
+    <string name="player_add">plus</string>
+    <string name="player_remove">minus</string>
+    <string name="game_desc">Beschreibung</string>
+    <string name="no_games">Keine Spiele vorhanden</string>
+    <string name="delete">Löschen</string>
+    <string name="continue_game">Fortfahren</string>
+    <string name="confirm_delete_game">Möchten Sie das Spiel wirklich löschen?</string>
+    <string name="delete_game">Spiel löschen</string>
+    <string name="error">Fehler</string>
+    <string name="ok">Ok</string>
+    <string name="doppelkopf">Doppelkopf</string>
+    <string name="skat">Skat</string>
+    <string name="player_names_missing">Es wurden nicht alle Spielernamen korrekt ausgefüllt.</string>
+    <string name="played_rounds">Gespielte Runden: %1$d</string>
+    <string name="players">Spieler</string>
+    <string name="current_points">Aktueller Punktestand</string>
+    <string name="current_points_content">%1$s: %2$d</string>
+    <string name="add_round">Runde hinzufügen</string>
+    <string name="points">Punkte</string>
+    <string name="insert">Eintragen</string>
+    <string name="current_round">Aktuelle Runde: %1$d</string>
+    <string name="player_giving">%1$s gibt</string>
+    <string name="player_giving_5">%1$s gibt, %2$s setzt aus</string>
+</resources>
