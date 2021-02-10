@@ -9,6 +9,7 @@
     <string name="app_name">SkatManager</string>
     <string name="create_new_list">Neue Liste erstellen</string>
     <string name="continue_existing_list">Existierende Liste fortführen</string>
+    <string name="continue_existing_list_online">Online-Listen</string>
     <string name="radio_skat">Skat</string>
     <string name="radio_doppelkopf">Doppelkopf</string>
     <string name="player_1">Spieler 1</string>

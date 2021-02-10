@@ -5,11 +5,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,6 +22,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.TextView;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,11 +47,16 @@ public class MainActivity extends AppCompatActivity {
     private int spanz;
 
     public List<Game> activeGames;
-    private SharedPreferences sharedPrefs;
 
     private RecyclerView mRecyclerView;
+    private RecyclerView mRecyclerViewOnline;
     private RecyclerView.LayoutManager mLayoutManager;
+    private RecyclerView.LayoutManager mLayoutManagerOnline;
     private RecyclerView.Adapter mAdapter;
+    private RecyclerView.Adapter mAdapterOnline;
+
+    private TextView mTextViewOnline;
+    private TextView mTextViewOnlineEmptyList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +67,14 @@ public class MainActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        spanz = 3;
+        mRecyclerViewOnline = findViewById(R.id.my_online_recycler_view);
+        mLayoutManagerOnline = new LinearLayoutManager(this);
+        mRecyclerViewOnline.setLayoutManager(mLayoutManagerOnline);
 
-        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mTextViewOnline = findViewById(R.id.tv2_online);
+        mTextViewOnlineEmptyList = findViewById(R.id.tv_no_online_games);
+
+        spanz = 3;
 
         new LoadGames().execute(this);
     }
@@ -225,6 +249,19 @@ public class MainActivity extends AppCompatActivity {
     public class LoadGames extends AsyncTask<Context, Void, List<Game>> {
         @Override
         protected List<Game> doInBackground(Context... c) {
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(c[0]);
+            if(sharedPreferences.getBoolean("use_network", false)) {
+                new LoadOnlineGames().execute(c[0]);
+            } else {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(mTextViewOnline.getVisibility() != View.GONE) mTextViewOnline.setVisibility(View.GONE);
+                        if(mTextViewOnlineEmptyList.getVisibility() != View.GONE) mTextViewOnlineEmptyList.setVisibility(View.GONE);
+                    }
+                });
+            }
+
             List<Game> gameList = Game.readGames(c[0]);
             if(gameList == null || gameList.size() < 1) runOnUiThread(new Runnable() {
                 @Override
@@ -276,6 +313,82 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
             mRecyclerView.setAdapter(mAdapter);
+        }
+    }
+
+    public class LoadOnlineGames extends AsyncTask<Context, Void, Void> {
+        @Override
+        protected Void doInBackground(Context... c) {
+            final String baseUrl = "http://10.0.2.2:8080/skat-api/v1";
+
+            RequestQueue queue = Volley.newRequestQueue(c[0]);
+            StringRequest request = new StringRequest(Request.Method.GET, baseUrl + "/games", new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    try {
+                        List<Game> games = new ArrayList<>();
+                        JSONArray jsonGames = new JSONArray(response);
+                        for(int i = 0; i < jsonGames.length(); i++) {
+                            JSONObject jsonGame = jsonGames.getJSONObject(i);
+                            List<Player> players = new ArrayList<>();
+                            JSONArray jsonPlayers = jsonGame.getJSONArray("players");
+                            for(int ii = 0; ii < jsonPlayers.length(); ii++) {
+                                JSONObject jsonPlayer = jsonPlayers.getJSONObject(ii);
+                                Player player = new Player(jsonPlayer.getString("name"), jsonPlayer.getInt("points"));
+                                players.add(player);
+                            }
+
+                            JSONArray jsonRounds = jsonGame.getJSONArray("rounds");
+                            int roundGames = 0;
+                            for(int ii = 0; ii < jsonRounds.length(); ii++) {
+                                JSONArray jsonRoundGames = jsonRounds.getJSONObject(ii).getJSONArray("games");
+                                for(int iii = 0; iii < jsonRoundGames.length(); iii++) {
+                                    if(jsonRoundGames.getJSONObject(iii).has("value")) {
+                                        roundGames++;
+                                    }
+                                }
+                            }
+
+                            Game game = new Game(false, jsonGame.getString("name"), players, roundGames);
+                            games.add(game);
+                        }
+
+                        if(games == null | games.size() < 1) runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mTextViewOnlineEmptyList.setVisibility(View.VISIBLE);
+                            }
+                        });
+                        else runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mTextViewOnlineEmptyList.setVisibility(View.GONE);
+                            }
+                        });
+
+                        mAdapterOnline = new MyAdapter(games, MainActivity.this);
+                        mRecyclerViewOnline.setAdapter(mAdapterOnline);
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if(mTextViewOnline.getVisibility() != View.VISIBLE) mTextViewOnline.setVisibility(View.VISIBLE);
+                            }
+                        });
+                    } catch(JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+
+                }
+            });
+
+            queue.add(request);
+
+            return null;
         }
     }
 }
