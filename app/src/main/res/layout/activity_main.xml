@@ -1,221 +1,229 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:layout_width="match_parent"
+    android:id="@+id/swipe_refresh_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dp">
-
-        <TextView
-            android:id="@+id/tv1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:fontFamily="@font/roboto"
-            android:text="@string/create_new_list"
-            android:textColor="@android:color/black"
-            android:textSize="24sp" />
-
-        <EditText
-            android:id="@+id/edit_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="text"
-            android:hint="@string/game_desc" />
-
-        <RadioGroup
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/game_type">
-
-            <RadioButton
-                android:id="@+id/radio_skat"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:checked="true"
-                android:onClick="onSkat"
-                android:text="@string/radio_skat" />
-
-            <RadioButton
-                android:id="@+id/radio_doppelkopf"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:checked="false"
-                android:focusable="auto"
-                android:onClick="onDoppelkopf"
-                android:text="@string/radio_doppelkopf"/>
-        </RadioGroup>
-
-        <EditText
-            android:id="@+id/edit_player1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:hint="@string/player_1" />
-
-        <EditText
-            android:id="@+id/edit_player2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/player_2"
-            android:inputType="textPersonName" />
-
-        <EditText
-            android:id="@+id/edit_player3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textPersonName"
-            android:hint="@string/player_3" />
-
-        <EditText
-            android:id="@+id/edit_player4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/player_4"
-            android:inputType="textPersonName"
-            android:visibility="gone" />
-
-        <EditText
-            android:id="@+id/edit_player5"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/player_5"
-            android:inputType="textPersonName"
-            android:visibility="gone" />
-
-        <EditText
-            android:id="@+id/edit_player6"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:hint="@string/player_6"
-            android:inputType="textPersonName"
-            android:visibility="gone" />
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="30dp"
-            android:orientation="horizontal"
-            style="?android:attr/buttonBarStyle">
+            android:orientation="vertical"
+            android:padding="10dp">
 
-            <Button
-                android:id="@+id/button_confirm"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/tv1"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:elevation="0dp"
-                android:text="@string/button_confirm"
-                android:onClick="addGame"
-                android:textAlignment="textStart" />
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/roboto"
+                android:text="@string/create_new_list"
+                android:textColor="@android:color/black"
+                android:textSize="24sp" />
 
-            <Button
-                android:id="@+id/button_add"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content"
+            <EditText
+                android:id="@+id/edit_description"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:drawableStart="@drawable/ic_add"
-                android:onClick="addPlayer"
-                android:paddingEnd="20dp"
-                android:paddingStart="20dp" />
+                android:ems="10"
+                android:inputType="text"
+                android:hint="@string/game_desc" />
 
-            <Button
-                android:id="@+id/button_remove"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="wrap_content"
+            <RadioGroup
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0"
-                android:drawableStart="@drawable/ic_remove"
-                android:enabled="false"
-                android:onClick="removePlayer"
-                android:paddingEnd="20dp"
-                android:paddingStart="20dp" />
+                android:id="@+id/game_type">
+
+                <RadioButton
+                    android:id="@+id/radio_skat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="true"
+                    android:onClick="onSkat"
+                    android:text="@string/radio_skat" />
+
+                <RadioButton
+                    android:id="@+id/radio_doppelkopf"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:checked="false"
+                    android:focusable="auto"
+                    android:onClick="onDoppelkopf"
+                    android:text="@string/radio_doppelkopf"/>
+            </RadioGroup>
+
+            <EditText
+                android:id="@+id/edit_player1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:hint="@string/player_1" />
+
+            <EditText
+                android:id="@+id/edit_player2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/player_2"
+                android:inputType="textPersonName" />
+
+            <EditText
+                android:id="@+id/edit_player3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:hint="@string/player_3" />
+
+            <EditText
+                android:id="@+id/edit_player4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/player_4"
+                android:inputType="textPersonName"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/edit_player5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/player_5"
+                android:inputType="textPersonName"
+                android:visibility="gone" />
+
+            <EditText
+                android:id="@+id/edit_player6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:hint="@string/player_6"
+                android:inputType="textPersonName"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="30dp"
+                android:orientation="horizontal"
+                style="?android:attr/buttonBarStyle">
+
+                <Button
+                    android:id="@+id/button_confirm"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:elevation="0dp"
+                    android:text="@string/button_confirm"
+                    android:onClick="addGame"
+                    android:textAlignment="textStart" />
+
+                <Button
+                    android:id="@+id/button_add"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:drawableStart="@drawable/ic_add"
+                    android:onClick="addPlayer"
+                    android:paddingEnd="20dp"
+                    android:paddingStart="20dp" />
+
+                <Button
+                    android:id="@+id/button_remove"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0"
+                    android:drawableStart="@drawable/ic_remove"
+                    android:enabled="false"
+                    android:onClick="removePlayer"
+                    android:paddingEnd="20dp"
+                    android:paddingStart="20dp" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/roboto"
+                android:text="@string/continue_existing_list"
+                android:textColor="@android:color/black"
+                android:textSize="24sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_no_games"
+                android:text="@string/no_games"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:visibility="gone"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:nestedScrollingEnabled="false"
+                    android:id="@+id/my_recycler_view"/>
+
+            </RelativeLayout>
+
+
+            <!-- ONLINE MODE ONLY -->
+
+            <TextView
+                android:id="@+id/tv2_online"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="30dp"
+                android:fontFamily="@font/roboto"
+                android:text="@string/continue_existing_list_online"
+                android:textColor="@android:color/black"
+                android:textSize="24sp"
+                android:visibility="gone"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_no_online_games"
+                android:text="@string/no_games"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:visibility="gone"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:nestedScrollingEnabled="false"
+                    android:id="@+id/my_online_recycler_view"/>
+
+            </RelativeLayout>
 
         </LinearLayout>
+    </ScrollView>
 
-        <TextView
-            android:id="@+id/tv2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:fontFamily="@font/roboto"
-            android:text="@string/continue_existing_list"
-            android:textColor="@android:color/black"
-            android:textSize="24sp" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_no_games"
-            android:text="@string/no_games"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:visibility="gone"/>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_centerInParent="true"
-                android:nestedScrollingEnabled="false"
-                android:id="@+id/my_recycler_view"/>
-
-        </RelativeLayout>
-
-
-        <!-- ONLINE MODE ONLY -->
-
-        <TextView
-            android:id="@+id/tv2_online"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="30dp"
-            android:fontFamily="@font/roboto"
-            android:text="@string/continue_existing_list_online"
-            android:textColor="@android:color/black"
-            android:textSize="24sp"
-            android:visibility="gone"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_no_online_games"
-            android:text="@string/no_games"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:visibility="gone"/>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_centerInParent="true"
-                android:nestedScrollingEnabled="false"
-                android:id="@+id/my_online_recycler_view"/>
-
-        </RelativeLayout>
-
-    </LinearLayout>
-</ScrollView>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

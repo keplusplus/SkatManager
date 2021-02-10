@@ -14,6 +14,7 @@ import android.os.Bundle;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -58,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView mTextViewOnline;
     private TextView mTextViewOnlineEmptyList;
 
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +76,14 @@ public class MainActivity extends AppCompatActivity {
 
         mTextViewOnline = findViewById(R.id.tv2_online);
         mTextViewOnlineEmptyList = findViewById(R.id.tv_no_online_games);
+
+        mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new LoadGames().execute(MainActivity.this);
+            }
+        });
 
         spanz = 3;
 
@@ -377,6 +388,8 @@ public class MainActivity extends AppCompatActivity {
                         });
                     } catch(JSONException e) {
                         e.printStackTrace();
+                    } finally {
+                        if(mSwipeRefreshLayout.isRefreshing()) mSwipeRefreshLayout.setRefreshing(false);
                     }
                 }
             }, new Response.ErrorListener() {
