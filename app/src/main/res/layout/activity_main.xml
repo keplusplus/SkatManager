@@ -30,25 +30,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <!-- <androidx.recyclerview.widget.RecyclerView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerInParent="true"
-                    android:nestedScrollingEnabled="false"
-                    android:id="@+id/my_recycler_view"/>
-
-                <com.skydoves.androidveil.VeilRecyclerFrameView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/my_veil_recycler"
-                    app:veilFrame_layout="@layout/skeleton_row"
-                    app:veilFrame_veiled="true"
-                    app:veilFrame_shimmerEnable="true"
-                    app:veilFrame_highlightColor="@color/gray"
-                    app:veilFrame_baseAlpha="0.6"
-                    app:veilFrame_highlightAlpha="1.0"
-                    app:veilFrame_radius="8dp" /> -->
-
                 <com.skydoves.androidveil.VeilRecyclerFrameView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"

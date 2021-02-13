@@ -55,7 +55,7 @@ public class DataLoader {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(c));
         mAdapter = new MyAdapter(mGames, c);
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addVeiledItems(10);
+        mRecyclerView.addVeiledItems(3);
         mRecyclerView.unVeil();
     }
 
