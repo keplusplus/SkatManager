@@ -15,6 +15,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -34,10 +35,13 @@ public class DataLoader {
     private RequestQueue mQueue;
     private final String mBaseUrl;
 
+    private final List<Game> mGames;
+
     private TextView mNoGamesTextView;
 
-    private RecyclerView mRecyclerView;
-    private RecyclerView.LayoutManager mLayoutManager;
+    private final RecyclerView mRecyclerView;
+    private final RecyclerView.LayoutManager mLayoutManager;
+    private final RecyclerView.Adapter mAdapter;
 
     private VeilRecyclerFrameView mVeilRecyclverView;
 
@@ -46,17 +50,22 @@ public class DataLoader {
         mQueue = Volley.newRequestQueue(c);
         mBaseUrl = "http://10.0.2.2:8080/skat-api/v1";
 
+        mGames = new ArrayList<>();
+
         mNoGamesTextView = ((Activity) c).findViewById(R.id.tv_no_games);
 
         mRecyclerView = ((Activity) c).findViewById(R.id.my_recycler_view);
         mLayoutManager = new LinearLayoutManager(c);
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mAdapter = new MyAdapter(mGames, c);
+        mRecyclerView.setAdapter(mAdapter);
 
         mVeilRecyclverView = ((Activity) c).findViewById(R.id.my_veil_recycler);
         mVeilRecyclverView.setLayoutManager(new LinearLayoutManager(c));
     }
 
     public void refreshMainActivity() {
+        mGames.clear();
         MainActivityRefresher refresher = new MainActivityRefresher();
         refresher.execute();
     }
@@ -64,21 +73,19 @@ public class DataLoader {
     private class MainActivityRefresher extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... voids) {
-            final List<Game> games = new ArrayList<>();
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(c);
             boolean online = sharedPreferences.getBoolean("useOnline", false);
-            final RecyclerView.Adapter mAdapter = new MyAdapter(games, c);
-            mRecyclerView.setAdapter(mAdapter);
 
-            games.addAll(Game.readGames(c));
+            mGames.addAll(Game.readGames(c));
 
             if(online && ((MainActivity) c).isOnline) {
                 StringRequest request = new StringRequest(Request.Method.GET, mBaseUrl + "/games", new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        games.addAll(Game.parseServerResponse(response));
+                        mGames.addAll(Game.parseServerResponse(response));
                         mAdapter.notifyDataSetChanged();
-                        Log.v(TAG, String.format("Request succeded, list has now %d entries.", games.size()));
+                        Log.v(TAG, String.format("Request succeded, list has now %d entries.", mGames.size()));
+                        finishSwipeRefresh();
                     }
                 }, new Response.ErrorListener() {
                     @Override
@@ -86,13 +93,15 @@ public class DataLoader {
                         Log.w(TAG, "Volley: Error occured during request.\n");
                         error.printStackTrace();
                         mAdapter.notifyDataSetChanged();
+                        finishSwipeRefresh();
                     }
                 });
 
                 mQueue.add(request);
             } else {
                 mAdapter.notifyDataSetChanged();
-                showHideNoGamesTextView(games.size());
+                showHideNoGamesTextView(mGames.size());
+                finishSwipeRefresh();
             }
 
 
@@ -108,6 +117,15 @@ public class DataLoader {
                     } else {
                         if(mNoGamesTextView.getVisibility() != View.GONE) mNoGamesTextView.setVisibility(View.GONE);
                     }
+                }
+            });
+        }
+
+        private void finishSwipeRefresh() {
+            ((Activity) c).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ((SwipeRefreshLayout) ((Activity) c).findViewById(R.id.swipe_refresh_layout)).setRefreshing(false);
                 }
             });
         }

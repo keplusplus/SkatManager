@@ -17,6 +17,8 @@ public class MainActivity extends AppCompatActivity {
 
     private DataLoader mDataLoader;
 
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,15 +27,12 @@ public class MainActivity extends AppCompatActivity {
         DataLoader.registerNetworkCallback(this);
 
         mDataLoader = new DataLoader(this);
-        mDataLoader.refreshMainActivity();
 
-        final SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        mSwipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                // TODO: Add refresh action
-                // temporary
-                swipeRefreshLayout.setRefreshing(false);
+                mDataLoader.refreshMainActivity();
             }
         });
     }
@@ -58,8 +57,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.main_activity_menu_prefs:
                 break;
             case R.id.main_activity_menu_refresh:
-                // TODO: Add refresh action
-                // TODO: Set layout refreshing true
+                mSwipeRefreshLayout.setRefreshing(true);
+                mDataLoader.refreshMainActivity();
                 break;
             default:
                 break;
