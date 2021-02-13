@@ -1,32 +1,15 @@
 package org.no_ip.dauerfeuer.skatmanager;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.AsyncTask;
-import android.preference.PreferenceActivity;
-import android.preference.PreferenceManager;
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.RadioGroup;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "SkatManager";
@@ -51,8 +34,6 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         DataLoader.registerNetworkCallback(this);
-
-        spanz = 3;
 
         mDataLoader = new DataLoader(this);
         mDataLoader.refreshMainActivity();
@@ -86,149 +67,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void addPlayer(View view) {
-        Button b = (Button) view;
-        Button b2 = findViewById(R.id.button_remove);
-        b2.setEnabled(true);
-
-        spanz++;
-        switch (spanz) {
-            case 4:
-                EditText et4 = findViewById(getResources().getIdentifier("edit_player4", "id", getPackageName()));
-                et4.setVisibility(View.VISIBLE);
-                break;
-            case 5:
-                EditText et5 = findViewById(getResources().getIdentifier("edit_player5", "id", getPackageName()));
-                et5.setVisibility(View.VISIBLE);
-                break;
-            case 6:
-                b.setEnabled(false);
-                EditText et6 = findViewById(getResources().getIdentifier("edit_player6", "id", getPackageName()));
-                et6.setVisibility(View.VISIBLE);
-                break;
-        }
-    }
-
-    public void removePlayer(View view) {
-        Button b = (Button) view;
-        Button b2 = findViewById(R.id.button_add);
-        b2.setEnabled(true);
-        spanz--;
-        switch (spanz) {
-            case 3:
-                b.setEnabled(false);
-                EditText et4 = findViewById(getResources().getIdentifier("edit_player4", "id", getPackageName()));
-                et4.setText("");
-                et4.setVisibility(View.GONE);
-                break;
-            case 4:
-                RadioGroup group = findViewById(R.id.game_type);
-                if(group.getCheckedRadioButtonId() == R.id.radio_doppelkopf) {
-                    b.setEnabled(false);
-                }
-                EditText et5 = findViewById(getResources().getIdentifier("edit_player5", "id", getPackageName()));
-                et5.setText("");
-                et5.setVisibility(View.GONE);
-                break;
-            case 5:
-                EditText et6 = findViewById(getResources().getIdentifier("edit_player6", "id", getPackageName()));
-                et6.setText("");
-                et6.setVisibility(View.GONE);
-                break;
-        }
-    }
-
-    public void onSkat(View view) {
-        spanz = 3;
-        EditText et1 = findViewById(R.id.edit_player4);
-        et1.setVisibility(View.GONE);
-        et1.setText("");
-        EditText et2 = findViewById(R.id.edit_player5);
-        et2.setVisibility(View.GONE);
-        et2.setText("");
-        EditText et3 = findViewById(R.id.edit_player6);
-        et3.setVisibility(View.GONE);
-        et3.setText("");
-        findViewById(R.id.button_remove).setEnabled(false);
-        findViewById(R.id.button_add).setEnabled(true);
-    }
-
-    public void onDoppelkopf(View view) {
-        spanz = 4;
-        EditText et1 = findViewById(R.id.edit_player4);
-        et1.setVisibility(View.VISIBLE);
-        EditText et2 = findViewById(R.id.edit_player5);
-        et2.setVisibility(View.GONE);
-        et2.setText("");
-        EditText et3 = findViewById(R.id.edit_player6);
-        et3.setVisibility(View.GONE);
-        et3.setText("");
-        findViewById(R.id.button_remove).setEnabled(false);
-        findViewById(R.id.button_add).setEnabled(true);
-    }
-
-    public void addGame(View v) {
-        Game mNewGame;
-        List<Player> mPlayerList = new ArrayList<>();
-        String mGameDescription;
-        boolean gameIsDoppelkopf;
-
-        EditText mEditDescription = findViewById(R.id.edit_description);
-        EditText[] mEditPlayers = new EditText[spanz];
-        int i = 0;
-        for(EditText mEditPlayer : mEditPlayers) {
-            i++;
-            mEditPlayer = findViewById(getResources().getIdentifier("edit_player" + i, "id", getPackageName()));
-            mEditPlayers[i - 1] = mEditPlayer;
-            if(mEditPlayer.getText().toString().trim().length() < 1) {
-                errorDialog(getString(R.string.player_names_missing));
-                return;
-            }
-            mPlayerList.add(new Player(mEditPlayer.getText().toString().trim()));
-        }
-        for(EditText mEditPlayer : mEditPlayers) {
-            mEditPlayer.setText("");
-        }
-
-        gameIsDoppelkopf = ((RadioGroup) findViewById(R.id.game_type)).getCheckedRadioButtonId() == R.id.radio_doppelkopf;
-
-        if(mEditDescription.getText().toString().trim().length() < 1) {
-            if(gameIsDoppelkopf) {
-                mGameDescription = getString(R.string.doppelkopf);
-            } else {
-                mGameDescription = getString(R.string.skat);
-            }
-        } else {
-            mGameDescription = mEditDescription.getText().toString().trim();
-            mEditDescription.setText("");
-        }
-        Date date = new Date();
-        SimpleDateFormat format = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
-        mGameDescription = mGameDescription.concat(" (" + format.format(date) + ")");
-
-        mNewGame = new Game(gameIsDoppelkopf, mGameDescription, mPlayerList, 0);
-        mNewGame.storeGame(this);
-
-        Intent intent = new Intent(this, GameActivity.class);
-        intent.putExtra("game", mNewGame);
-        startActivity(intent);
-    }
-
-    public void errorDialog(String text) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.error);
-        builder.setMessage(text);
-        builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        builder.create().show();
-    }
-
-
-    public class LoadGames extends AsyncTask<Context, Void, List<Game>> {
+    /*public class LoadGames extends AsyncTask<Context, Void, List<Game>> {
         @Override
         protected List<Game> doInBackground(Context... c) {
             List<Game> gameList = Game.readGames(c[0]);
@@ -283,5 +122,5 @@ public class MainActivity extends AppCompatActivity {
             });
             mRecyclerView.setAdapter(mAdapter);
         }
-    }
+    }*/
 }
