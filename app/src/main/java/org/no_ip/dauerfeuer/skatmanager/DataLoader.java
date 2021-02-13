@@ -39,11 +39,8 @@ public class DataLoader {
 
     private TextView mNoGamesTextView;
 
-    private final RecyclerView mRecyclerView;
-    private final RecyclerView.LayoutManager mLayoutManager;
+    private final VeilRecyclerFrameView mRecyclerView;
     private final RecyclerView.Adapter mAdapter;
-
-    private VeilRecyclerFrameView mVeilRecyclverView;
 
     public DataLoader(Context c) {
         this.c = c;
@@ -55,17 +52,16 @@ public class DataLoader {
         mNoGamesTextView = ((Activity) c).findViewById(R.id.tv_no_games);
 
         mRecyclerView = ((Activity) c).findViewById(R.id.my_recycler_view);
-        mLayoutManager = new LinearLayoutManager(c);
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(c));
         mAdapter = new MyAdapter(mGames, c);
         mRecyclerView.setAdapter(mAdapter);
-
-        mVeilRecyclverView = ((Activity) c).findViewById(R.id.my_veil_recycler);
-        mVeilRecyclverView.setLayoutManager(new LinearLayoutManager(c));
+        mRecyclerView.addVeiledItems(10);
+        mRecyclerView.unVeil();
     }
 
     public void refreshMainActivity() {
         mGames.clear();
+        mRecyclerView.veil();
         MainActivityRefresher refresher = new MainActivityRefresher();
         refresher.execute();
     }
@@ -86,6 +82,7 @@ public class DataLoader {
                         mAdapter.notifyDataSetChanged();
                         Log.v(TAG, String.format("Request succeded, list has now %d entries.", mGames.size()));
                         finishSwipeRefresh();
+                        mRecyclerView.unVeil();
                     }
                 }, new Response.ErrorListener() {
                     @Override
@@ -94,6 +91,7 @@ public class DataLoader {
                         error.printStackTrace();
                         mAdapter.notifyDataSetChanged();
                         finishSwipeRefresh();
+                        mRecyclerView.unVeil();
                     }
                 });
 
@@ -102,6 +100,7 @@ public class DataLoader {
                 mAdapter.notifyDataSetChanged();
                 showHideNoGamesTextView(mGames.size());
                 finishSwipeRefresh();
+                mRecyclerView.unVeil();
             }
 
 
