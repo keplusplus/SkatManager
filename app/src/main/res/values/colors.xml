@@ -6,4 +6,9 @@
     <color name="colorPrimary">#00695c</color>
     <color name="colorPrimaryDark">#003d33</color>
     <color name="colorAccent">#00695c</color>
+
+    <!-- For Skeleton -->
+    <color name="skeleton">#ccc</color>
+    <color name="gray">#eee</color>
+    <color name="shimmer">#888</color>
 </resources>

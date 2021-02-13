@@ -1,48 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:id="@+id/swipe_refresh_layout">
 
-    <LinearLayout
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="10dp">
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
 
-        <TextView
-            android:id="@+id/tv2"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:fontFamily="@font/roboto"
-            android:text="@string/continue_existing_list"
-            android:textColor="@android:color/black"
-            android:textSize="24sp" />
+            android:orientation="vertical"
+            android:padding="10dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_no_games"
-            android:text="@string/no_games"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-            android:visibility="gone"/>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <androidx.recyclerview.widget.RecyclerView
+            <TextView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_centerInParent="true"
-                android:nestedScrollingEnabled="false"
-                android:id="@+id/my_recycler_view"/>
+                android:layout_height="wrap_content"
+                android:id="@+id/tv_no_games"
+                android:text="@string/no_games"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:visibility="gone"/>
 
-        </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-    </LinearLayout>
-</ScrollView>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:nestedScrollingEnabled="false"
+                    android:id="@+id/my_recycler_view"/>
+
+                <com.skydoves.androidveil.VeilRecyclerFrameView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/my_veil_recycler"
+                    app:veilFrame_layout="@layout/skeleton_row_card"
+                    app:veilFrame_veiled="true"
+                    app:veilFrame_shimmerEnable="true"
+                    app:veilFrame_highlightColor="@color/gray"
+                    app:veilFrame_baseAlpha="0.6"
+                    app:veilFrame_highlightAlpha="1.0"
+                    app:veilFrame_radius="8dp" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

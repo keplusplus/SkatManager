@@ -5,13 +5,16 @@ import android.content.SharedPreferences;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
-import android.util.JsonReader;
 import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,21 +23,26 @@ public class Game implements Parcelable {
     private List<Player> mPlayerList;
     private String mGameName;
     private boolean mGameIsDoppelkopf;
-    private int mGameRounds;
+    private int mPlayedRoundGames;
+    private boolean mIsOnline;
 
-    public Game(Boolean gameIsDoppelkopf, String name, List<Player> players, int rounds) {
+    private Date mStartDate;
+
+    public Game(Boolean gameIsDoppelkopf, String name, List<Player> players, int rounds, boolean isOnline) {
         this.mGameName = name;
         this.mPlayerList = players;
         this.mGameIsDoppelkopf = gameIsDoppelkopf;
-        this.mGameRounds = rounds;
+        this.mPlayedRoundGames = rounds;
+        this.mIsOnline = isOnline;
     }
 
     public Game(Parcel in) {
         this.mGameName = in.readString();
         this.mPlayerList = new ArrayList<Player>();
         in.readList(mPlayerList, Player.class.getClassLoader());
-        this.mGameRounds = in.readInt();
+        this.mPlayedRoundGames = in.readInt();
         this.mGameIsDoppelkopf = in.readByte() != 0;
+        this.mIsOnline = in.readByte() != 0;
     }
 
     public List<Player> getPlayerList() {
@@ -45,16 +53,28 @@ public class Game implements Parcelable {
         return mGameName;
     }
 
-    public int getGameRounds() {
-        return mGameRounds;
+    public int getRoundGames() {
+        return mPlayedRoundGames;
     }
 
-    public void roundPlayed() {
-        this.mGameRounds++;
+    public void roundGamePlayed() {
+        this.mPlayedRoundGames++;
     }
 
     public boolean getIsDoppelkopf() {
         return mGameIsDoppelkopf;
+    }
+
+    public boolean getIsOnline() {
+        return mIsOnline;
+    }
+
+    public Date getStartDate() {
+        return mStartDate;
+    }
+
+    public void setStartDate(Date startDate) {
+        this.mStartDate = startDate;
     }
 
     public void storeGame(Context context) {
@@ -62,7 +82,7 @@ public class Game implements Parcelable {
             JSONObject parent = new JSONObject();
             parent.put("game_is_doppelkopf", mGameIsDoppelkopf);
             parent.put("game_name", mGameName);
-            parent.put("game_rounds", mGameRounds);
+            parent.put("game_rounds", mPlayedRoundGames);
             JSONArray playerArray = new JSONArray();
             for(Player p : mPlayerList) {
                 playerArray.put(new JSONObject().put("player_name", p.getPlayerName()).put("player_points", p.getPlayerPoints()));
@@ -134,7 +154,7 @@ public class Game implements Parcelable {
                     gamePlayers.add(player);
                 }
 
-                Game game = new Game(gameIsDoppelkopf, gameName, gamePlayers, gameRounds);
+                Game game = new Game(gameIsDoppelkopf, gameName, gamePlayers, gameRounds, false);
                 gameList.add(game);
             }
         } catch (JSONException e) {
@@ -142,6 +162,55 @@ public class Game implements Parcelable {
             return null;
         }
         return gameList;
+    }
+
+    public static List<Game> parseServerResponse(String response) {
+        List<Game> games = new ArrayList<>();
+
+        try {
+            JSONArray jsonGames = new JSONArray(response);
+            for (int gameIndex = 0; gameIndex < jsonGames.length(); gameIndex++) {
+                JSONObject jsonGame = jsonGames.getJSONObject(gameIndex);
+
+                List<Player> players = new ArrayList<>();
+
+                JSONArray jsonPlayers = jsonGame.getJSONArray("players");
+
+                for (int playerIndex = 0; playerIndex < jsonPlayers.length(); playerIndex++) {
+                    JSONObject jsonPlayer = jsonPlayers.getJSONObject(playerIndex);
+                    Player player = new Player(jsonPlayer.getString("name"), jsonPlayer.getInt("points"));
+                    players.add(player);
+                }
+
+                int roundGames = 0;
+                JSONArray jsonRounds = jsonGame.getJSONArray("rounds");
+                for (int i = 0; i < jsonRounds.length(); i++) {
+                    JSONArray jsonRoundGames = jsonRounds.getJSONObject(i).getJSONArray("games");
+                    for (int j = 0; j < jsonRoundGames.length(); j++) {
+                        if (jsonRoundGames.getJSONObject(j).has("value")) {
+                            roundGames++;
+                        }
+                    }
+                }
+
+                Game game = new Game(false, jsonGame.getString("name"), players, roundGames, true);
+
+                SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                try {
+                    Date d = isoFormat.parse(jsonGame.getString("created"));
+                    game.setStartDate(d);
+
+                } catch (ParseException e) {
+                    Log.w(MainActivity.TAG, e.getLocalizedMessage());
+                }
+
+                games.add(game);
+            }
+        } catch (JSONException e) {
+            Log.w(MainActivity.TAG, e.getLocalizedMessage());
+        }
+
+        return games;
     }
 
 
@@ -157,8 +226,9 @@ public class Game implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mGameName);
         dest.writeList(mPlayerList);
-        dest.writeInt(mGameRounds);
+        dest.writeInt(mPlayedRoundGames);
         dest.writeByte((byte) (mGameIsDoppelkopf ? 1 : 0));
+        dest.writeByte((byte) (mIsOnline ? 1 : 0));
     }
 
     public static final Parcelable.Creator<Game> CREATOR = new Parcelable.Creator<Game>() {

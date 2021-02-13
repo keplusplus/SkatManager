@@ -1,6 +1,5 @@
 package org.no_ip.dauerfeuer.skatmanager;
 
-import android.app.Activity;
 import android.content.Context;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
@@ -37,7 +37,17 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         final Game game = mItemList.get(position);
 
         //Setting text view title
-        holder.mTextView.setText(Html.fromHtml(game.getGameName()));
+
+        // String gameName = Html.fromHtml(game.getGameName());
+        if(game.getStartDate() != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+            holder.mTextView.setText(String.format("%s (%s)", game.getGameName(), dateFormat.format(game.getStartDate())));
+        } else {
+            holder.mTextView.setText(game.getGameName());
+        }
+
+        holder.mOnlineTextView.setText(game.getIsOnline() ? R.string.card_online_game : R.string.card_local_game);
+
         List<Player> mPlayers = game.getPlayerList();
         StringBuilder builder = new StringBuilder(mContext.getString(R.string.players) + ": ");
         int i = 0;
@@ -50,7 +60,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
             i++;
         }
         holder.mPlayersTextView.setText(builder.toString());
-        holder.mRoundsTextView.setText(String.format(mContext.getString(R.string.played_rounds), game.getGameRounds()));
+        holder.mRoundsTextView.setText(String.format(mContext.getString(R.string.played_rounds), game.getRoundGames()));
 
         holder.mDeleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,6 +101,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         protected TextView mTextView;
+        protected TextView mOnlineTextView;
         protected TextView mPlayersTextView;
         protected TextView mRoundsTextView;
         protected Button mDeleteButton;
@@ -99,6 +110,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         public MyViewHolder(View v) {
             super(v);
             mTextView = v.findViewById(R.id.my_card_title);
+            mOnlineTextView = v.findViewById(R.id.my_card_is_online);
             mPlayersTextView =  v.findViewById(R.id.my_card_players);
             mRoundsTextView = v.findViewById(R.id.my_card_rounds);
             mDeleteButton = v.findViewById(R.id.my_card_remove_button);

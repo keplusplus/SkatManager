@@ -8,19 +8,12 @@ import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "SkatManager";
 
     protected boolean isOnline;
-
-    private int spanz;
-
-    private RecyclerView mRecyclerView;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private RecyclerView.Adapter mAdapter;
 
     private DataLoader mDataLoader;
 
@@ -29,16 +22,20 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mRecyclerView = findViewById(R.id.my_recycler_view);
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
         DataLoader.registerNetworkCallback(this);
 
         mDataLoader = new DataLoader(this);
         mDataLoader.refreshMainActivity();
 
-        // new LoadGames().execute(this);
+        final SwipeRefreshLayout swipeRefreshLayout = findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                // TODO: Add refresh action
+                // temporary
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
     }
 
     @Override
@@ -46,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         mDataLoader.refreshMainActivity();
-        // new LoadGames().execute(this);
     }
 
     @Override
@@ -58,6 +54,17 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.main_activity_menu_prefs:
+                break;
+            case R.id.main_activity_menu_refresh:
+                // TODO: Add refresh action
+                // TODO: Set layout refreshing true
+                break;
+            default:
+                break;
+        }
+
         if(item.getItemId() == R.id.main_activity_menu_prefs) {
             Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(intent);

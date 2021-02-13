@@ -44,10 +44,10 @@ public class GameActivity extends AppCompatActivity {
         }
 
         mCurrentRoundView = findViewById(R.id.current_round_view);
-        mCurrentRoundView.setText(String.format(getString(R.string.current_round), mGame.getGameRounds() + 1));
+        mCurrentRoundView.setText(String.format(getString(R.string.current_round), mGame.getRoundGames() + 1));
         mGiverView = findViewById(R.id.giver_view);
 
-        mGiverIndex = mGame.getGameRounds() % mGame.getPlayerList().size();
+        mGiverIndex = mGame.getRoundGames() % mGame.getPlayerList().size();
         if(mGame.getPlayerList().size() <= 4) {
             mGiverView.setText(String.format(getString(R.string.player_giving), mGame.getPlayerList().get(mGiverIndex).getPlayerName()));
         } else {
@@ -143,7 +143,7 @@ public class GameActivity extends AppCompatActivity {
             player.setPlayerPoints(player.getPlayerPoints() + Integer.parseInt(pointsEdit.getText().toString()));
         }
 
-        mGame.roundPlayed();
+        mGame.roundGamePlayed();
         refreshPoints();
     }
 
@@ -153,8 +153,8 @@ public class GameActivity extends AppCompatActivity {
             tv.setText(String.format(getString(R.string.current_points_content), p.getPlayerName(), p.getPlayerPoints()));
         }
 
-        mCurrentRoundView.setText(String.format(getString(R.string.current_round), mGame.getGameRounds() + 1));
-        mGiverIndex = mGame.getGameRounds() % mGame.getPlayerList().size();
+        mCurrentRoundView.setText(String.format(getString(R.string.current_round), mGame.getRoundGames() + 1));
+        mGiverIndex = mGame.getRoundGames() % mGame.getPlayerList().size();
         if(mGame.getPlayerList().size() <= 4) {
             mGiverView.setText(String.format(getString(R.string.player_giving), mGame.getPlayerList().get(mGiverIndex).getPlayerName()));
         } else {

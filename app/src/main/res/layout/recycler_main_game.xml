@@ -28,8 +28,14 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/my_card_is_online"
+            android:layout_below="@id/my_card_title" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/my_card_players"
-            android:layout_below="@id/my_card_title"/>
+            android:layout_below="@id/my_card_is_online"/>
 
         <TextView
             android:layout_width="match_parent"
