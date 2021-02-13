@@ -1,5 +1,6 @@
 package org.no_ip.dauerfeuer.skatmanager;
 
+import android.app.Activity;
 import android.content.Context;
 
 import androidx.recyclerview.widget.RecyclerView;

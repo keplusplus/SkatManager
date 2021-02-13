@@ -31,14 +31,15 @@ import java.util.Locale;
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "SkatManager";
 
-    private int spanz;
+    protected boolean isOnline;
 
-    public List<Game> activeGames;
-    private SharedPreferences sharedPrefs;
+    private int spanz;
 
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
     private RecyclerView.Adapter mAdapter;
+
+    private DataLoader mDataLoader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,17 +50,22 @@ public class MainActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
+        DataLoader.registerNetworkCallback(this);
+
         spanz = 3;
 
-        sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        mDataLoader = new DataLoader(this);
+        mDataLoader.refreshMainActivity();
 
-        new LoadGames().execute(this);
+        // new LoadGames().execute(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        new LoadGames().execute(this);
+
+        mDataLoader.refreshMainActivity();
+        // new LoadGames().execute(this);
     }
 
     @Override
@@ -72,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if(item.getItemId() == R.id.main_activity_menu_prefs) {
-            Intent intent = new Intent(MainActivity.this, PreferenceActivity.class);
+            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
             startActivity(intent);
             return true;
         } else {
