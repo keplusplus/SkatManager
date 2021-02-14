@@ -1,14 +1,19 @@
 package org.no_ip.dauerfeuer.skatmanager;
 
+import android.app.AlertDialog;
 import android.content.Context;
 
 import androidx.recyclerview.widget.RecyclerView;
+
+import android.content.DialogInterface;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -16,8 +21,6 @@ import java.util.List;
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     private List<Game> mItemList;
 
-    private OnItemClickListener mRemoveClickListener;
-    private OnItemClickListener mStartClickListener;
     private Context mContext;
 
     public MyAdapter(List<Game> l, Context c) {
@@ -65,13 +68,30 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         holder.mDeleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mRemoveClickListener.onItemClick(game);
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setTitle(R.string.delete_game);
+                builder.setMessage(R.string.confirm_delete_game);
+                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        dialog.dismiss();
+                        game.removeGame(mContext);
+                    }
+                });
+                builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.create().show();
             }
         });
+
         holder.mStartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mStartClickListener.onItemClick(game);
+
             }
         });
     }
@@ -79,22 +99,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
     @Override
     public int getItemCount() {
         return (null != mItemList ? mItemList.size() : 0);
-    }
-
-    public OnItemClickListener getDeleteClickListener() {
-        return mRemoveClickListener;
-    }
-
-    public void setDeleteClickListener(OnItemClickListener cl) {
-        this.mRemoveClickListener = cl;
-    }
-
-    public OnItemClickListener getStartClickListener() {
-        return mStartClickListener;
-    }
-
-    public void setStartClickListener(OnItemClickListener cl) {
-        this.mStartClickListener = cl;
     }
 
     // Subclass ViewHolder
