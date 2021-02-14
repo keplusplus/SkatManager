@@ -17,13 +17,17 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.skydoves.androidveil.VeilRecyclerFrameView;
+
+import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +70,23 @@ public class DataLoader {
         refresher.execute();
     }
 
+    public void deleteOnlineGame(Game game) {
+        mRecyclerView.veil();
+        StringRequest request = new StringRequest(Request.Method.DELETE, String.format("%s/games/%s", mBaseUrl, Game.byteArrayToHexString(game.getGameId())), new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                refreshMainActivity();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                refreshMainActivity();
+            }
+        });
+
+        mQueue.add(request);
+    }
+
     private class MainActivityRefresher extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... voids) {
@@ -75,9 +96,9 @@ public class DataLoader {
             mGames.addAll(Game.readGames(c));
 
             if(online && ((MainActivity) c).isOnline) {
-                StringRequest request = new StringRequest(Request.Method.GET, mBaseUrl + "/games", new Response.Listener<String>() {
+                JsonArrayRequest request = new JsonArrayRequest(Request.Method.GET, mBaseUrl + "/games", null, new Response.Listener<JSONArray>() {
                     @Override
-                    public void onResponse(String response) {
+                    public void onResponse(JSONArray response) {
                         mGames.addAll(Game.parseServerResponse(response));
                         mAdapter.notifyDataSetChanged();
                         Log.v(TAG, String.format("Request succeded, list has now %d entries.", mGames.size()));
@@ -103,6 +124,7 @@ public class DataLoader {
                 mRecyclerView.unVeil();
             }
 
+            showHideNoGamesTextView(mGames.size());
 
             return null;
         }
@@ -114,6 +136,7 @@ public class DataLoader {
                     if(gameCount < 1) {
                         if(mNoGamesTextView.getVisibility() != View.VISIBLE) mNoGamesTextView.setVisibility(View.VISIBLE);
                     } else {
+                        // TODO: Something is still wrong here, more testing needed...
                         if(mNoGamesTextView.getVisibility() != View.GONE) mNoGamesTextView.setVisibility(View.GONE);
                     }
                 }
