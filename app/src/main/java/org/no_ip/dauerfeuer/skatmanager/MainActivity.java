@@ -73,6 +73,10 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public DataLoader getDataLoader() {
+        return mDataLoader;
+    }
+
     /*public class LoadGames extends AsyncTask<Context, Void, List<Game>> {
         @Override
         protected List<Game> doInBackground(Context... c) {
