@@ -44,4 +44,6 @@
     <string name="pref_useOnline">Enable network</string>
     <string name="main_activity_menu_prefs">Preferences</string>
     <string name="main_activity_menu_refresh">Refresh</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>

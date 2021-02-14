@@ -44,4 +44,6 @@
     <string name="pref_useOnline">Aktiviere Netzwerk</string>
     <string name="main_activity_menu_prefs">Einstellungen</string>
     <string name="main_activity_menu_refresh">Aktualisieren</string>
+    <string name="yes">Ja</string>
+    <string name="no">Nein</string>
 </resources>

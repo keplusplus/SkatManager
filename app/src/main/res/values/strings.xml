@@ -53,4 +53,6 @@
     <string name="confirm_delete_game">This will delete the game. Are you sure?</string>
     <string name="player_names_missing">Some player names are missing.</string>
     <string name="current_points">Current standings</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 </resources>
