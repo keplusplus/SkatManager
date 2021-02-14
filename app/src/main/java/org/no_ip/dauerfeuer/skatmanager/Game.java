@@ -3,6 +3,7 @@ package org.no_ip.dauerfeuer.skatmanager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Parcel;
+import android.os.ParcelUuid;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -11,6 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -18,6 +20,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 public class Game implements Parcelable {
     private List<Player> mPlayerList;
@@ -25,6 +29,7 @@ public class Game implements Parcelable {
     private boolean mGameIsDoppelkopf;
     private int mPlayedRoundGames;
     private boolean mIsOnline;
+    private byte[] mGameId;
 
     private Date mStartDate;
 
@@ -34,6 +39,13 @@ public class Game implements Parcelable {
         this.mGameIsDoppelkopf = gameIsDoppelkopf;
         this.mPlayedRoundGames = rounds;
         this.mIsOnline = isOnline;
+        mGameId = new byte[12];
+        new Random().nextBytes(mGameId);
+    }
+
+    public Game(byte[] gameId, Boolean gameIsDoppelkopf, String name, List<Player> players, int rounds, boolean isOnline) {
+        this(gameIsDoppelkopf, name, players, rounds, isOnline);
+        this.mGameId = gameId;
     }
 
     public Game(Parcel in) {
@@ -43,6 +55,7 @@ public class Game implements Parcelable {
         this.mPlayedRoundGames = in.readInt();
         this.mGameIsDoppelkopf = in.readByte() != 0;
         this.mIsOnline = in.readByte() != 0;
+        in.readByteArray(mGameId);
     }
 
     public List<Player> getPlayerList() {
@@ -67,6 +80,10 @@ public class Game implements Parcelable {
 
     public boolean getIsOnline() {
         return mIsOnline;
+    }
+
+    public byte[] getGameId() {
+        return mGameId;
     }
 
     public Date getStartDate() {
@@ -113,23 +130,29 @@ public class Game implements Parcelable {
     }
 
     public void removeGame(Context context) {
-        try {
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-            String mExistingGames = sharedPreferences.getString("games", "");
-            JSONArray mOldGamesJSON;
-            if(!mExistingGames.equals("")) {
-                 mOldGamesJSON = new JSONArray(mExistingGames);
-                 for(int i = 0; i < mOldGamesJSON.length(); i++) {
-                     JSONObject object = (JSONObject) mOldGamesJSON.get(i);
-                     if(object.getString("game_name").equals(mGameName)) {
-                         mOldGamesJSON.remove(i);
-                         i = mOldGamesJSON.length();
-                     }
-                 }
-                 sharedPreferences.edit().putString("games", mOldGamesJSON.toString()).apply();
+        if(getIsOnline()) {
+            ((MainActivity) context).getDataLoader().deleteOnlineGame(this);
+        } else {
+            try {
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+                String mExistingGames = sharedPreferences.getString("games", "");
+                JSONArray mOldGamesJSON;
+                if (!mExistingGames.equals("")) {
+                    mOldGamesJSON = new JSONArray(mExistingGames);
+                    for (int i = 0; i < mOldGamesJSON.length(); i++) {
+                        JSONObject object = (JSONObject) mOldGamesJSON.get(i);
+                        if (object.getString("game_name").equals(mGameName)) {
+                            mOldGamesJSON.remove(i);
+                            i = mOldGamesJSON.length();
+                        }
+                    }
+                    sharedPreferences.edit().putString("games", mOldGamesJSON.toString()).apply();
+                }
+
+                ((MainActivity) context).getDataLoader().refreshMainActivity();
+            } catch (JSONException e) {
+                Log.d(MainActivity.TAG, e.getLocalizedMessage());
             }
-        } catch (JSONException e) {
-            Log.d(MainActivity.TAG, e.getLocalizedMessage());
         }
     }
 
@@ -154,7 +177,13 @@ public class Game implements Parcelable {
                     gamePlayers.add(player);
                 }
 
-                Game game = new Game(gameIsDoppelkopf, gameName, gamePlayers, gameRounds, false);
+                Game game;
+                if(object.has("id")) {
+                    String sId = object.getString("id");
+
+                    game = new Game(hexStringToByteArray(object.getString("id")), gameIsDoppelkopf, gameName, gamePlayers, gameRounds, false);
+                }
+                else game = new Game(gameIsDoppelkopf, gameName, gamePlayers, gameRounds, false);
                 gameList.add(game);
             }
         } catch (JSONException e) {
@@ -164,11 +193,11 @@ public class Game implements Parcelable {
         return gameList;
     }
 
-    public static List<Game> parseServerResponse(String response) {
+    public static List<Game> parseServerResponse(JSONArray response) {
         List<Game> games = new ArrayList<>();
 
         try {
-            JSONArray jsonGames = new JSONArray(response);
+            JSONArray jsonGames = response;
             for (int gameIndex = 0; gameIndex < jsonGames.length(); gameIndex++) {
                 JSONObject jsonGame = jsonGames.getJSONObject(gameIndex);
 
@@ -193,7 +222,7 @@ public class Game implements Parcelable {
                     }
                 }
 
-                Game game = new Game(false, jsonGame.getString("name"), players, roundGames, true);
+                Game game = new Game(hexStringToByteArray(jsonGame.getString("_id")), false, jsonGame.getString("name"), players, roundGames, true);
 
                 SimpleDateFormat isoFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
                 try {
@@ -213,6 +242,25 @@ public class Game implements Parcelable {
         return games;
     }
 
+    public static byte[] hexStringToByteArray(String s) {
+        int len = s.length();
+        byte[] data = new byte[len / 2];
+        for(int i = 0; i < len; i += 2) {
+            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4) + Character.digit(s.charAt(i + 1), 16));
+        }
+        return data;
+    }
+
+    public static String byteArrayToHexString(byte[] bytes) {
+        byte[] hexArray = "0123456789abcdef".getBytes(StandardCharsets.UTF_8);
+        byte[] hexChars = new byte[bytes.length * 2];
+        for(int i = 0; i < bytes.length; i++) {
+            int v = bytes[i] & 0xFF;
+            hexChars[i * 2] = hexArray[v >>> 4];
+            hexChars[i * 2 + 1] = hexArray[v & 0x0F];
+        }
+        return new String(hexChars, StandardCharsets.UTF_8);
+    }
 
 
     //Parcelable part
@@ -229,6 +277,7 @@ public class Game implements Parcelable {
         dest.writeInt(mPlayedRoundGames);
         dest.writeByte((byte) (mGameIsDoppelkopf ? 1 : 0));
         dest.writeByte((byte) (mIsOnline ? 1 : 0));
+        dest.writeByteArray(mGameId);
     }
 
     public static final Parcelable.Creator<Game> CREATOR = new Parcelable.Creator<Game>() {
