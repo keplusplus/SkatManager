@@ -23,7 +23,9 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/tv_no_games"
                 android:text="@string/no_games"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textStyle="italic"
+                android:textAlignment="center"
                 android:visibility="gone"/>
 
             <RelativeLayout
