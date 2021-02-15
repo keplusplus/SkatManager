@@ -1,12 +1,15 @@
 package org.no_ip.dauerfeuer.skatmanager;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkRequest;
 import android.os.AsyncTask;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
@@ -66,6 +69,12 @@ public class DataLoader {
     public void refreshMainActivity() {
         mGames.clear();
         mRecyclerView.veil();
+        ((Activity) c).runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ((MainActivity) c).findViewById(R.id.tv_no_games).setVisibility(View.GONE);
+            }
+        });
         MainActivityRefresher refresher = new MainActivityRefresher();
         refresher.execute();
     }
@@ -101,22 +110,58 @@ public class DataLoader {
                     public void onResponse(JSONArray response) {
                         mGames.addAll(Game.parseServerResponse(response));
                         mAdapter.notifyDataSetChanged();
-                        Log.v(TAG, String.format("Request succeded, list has now %d entries.", mGames.size()));
+                        showHideNoGamesTextView(mGames.size());
                         finishSwipeRefresh();
                         mRecyclerView.unVeil();
+
+                        Log.v(TAG, String.format("Request succeeded, list has now %d entries.", mGames.size()));
                     }
                 }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Log.w(TAG, "Volley: Error occured during request.\n");
+                        Log.w(TAG, "Volley: Error occurred during request.\n");
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(c);
+                        builder.setTitle(R.string.server_error);
+                        builder.setMessage(R.string.server_error_details);
+                        builder.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int i) {
+                                dialog.dismiss();
+                            }
+                        });
+                        builder.create().show();
+
                         error.printStackTrace();
                         mAdapter.notifyDataSetChanged();
+                        showHideNoGamesTextView(mGames.size());
                         finishSwipeRefresh();
                         mRecyclerView.unVeil();
                     }
                 });
 
                 mQueue.add(request);
+            } else if(online && !((MainActivity) c).isOnline) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(c);
+                builder.setTitle(R.string.not_connected);
+                builder.setMessage(R.string.not_connected_details);
+                builder.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        dialog.dismiss();
+                    }
+                });
+                ((MainActivity) c).runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        builder.create().show();
+                    }
+                });
+
+                mAdapter.notifyDataSetChanged();
+                showHideNoGamesTextView(mGames.size());
+                finishSwipeRefresh();
+                mRecyclerView.unVeil();
             } else {
                 mAdapter.notifyDataSetChanged();
                 showHideNoGamesTextView(mGames.size());
@@ -124,12 +169,11 @@ public class DataLoader {
                 mRecyclerView.unVeil();
             }
 
-            showHideNoGamesTextView(mGames.size());
-
             return null;
         }
 
         private void showHideNoGamesTextView(final int gameCount) {
+            Log.v(TAG, "showHideNoGamesTextView called with gameCount " + gameCount);
             ((Activity) c).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
