@@ -161,7 +161,7 @@ public class Game implements Parcelable {
         try {
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
             String mGames = sharedPreferences.getString("games", "");
-            if(mGames.equals("")) return null;
+            if(mGames.equals("")) return gameList;
 
             JSONArray games = new JSONArray(mGames);
             for(int i = 0; i < games.length(); i++) {
@@ -187,7 +187,7 @@ public class Game implements Parcelable {
                 gameList.add(game);
             }
         } catch (JSONException e) {
-            Log.d(MainActivity.TAG, e.getLocalizedMessage());
+            Log.w(MainActivity.TAG, e.getLocalizedMessage());
             return null;
         }
         return gameList;
