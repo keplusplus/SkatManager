@@ -51,4 +51,8 @@
     <string name="not_connected">Nicht verbunden</string>
     <string name="not_connected_details">Es werden nur lokal gespeicherte Spiele angezeigt.</string>
     <string name="games">Spiele</string>
+    <string name="add_game_activity_title">Spiel hinzufügen</string>
+    <string name="tab_online">Online</string>
+    <string name="tab_local">Lokal</string>
+    <string name="create">Erstellen</string>
 </resources>

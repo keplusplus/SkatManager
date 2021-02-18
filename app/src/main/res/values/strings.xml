@@ -60,7 +60,9 @@
     <string name="not_connected">Not connected</string>
     <string name="not_connected_details">Showing only local saved games.</string>
     <string name="games">Games</string>
-    <string name="title_activity_add_game">AddGameActivity</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
+    <string name="tab_online">Online</string>
+    <string name="tab_local">Local</string>
+    <string name="add_game_activity_title">Add new game</string>
+
+    <string name="create">Create</string>
 </resources>
