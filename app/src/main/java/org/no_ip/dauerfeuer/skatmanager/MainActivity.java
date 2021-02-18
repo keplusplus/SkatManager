@@ -5,10 +5,13 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "SkatManager";
@@ -35,6 +38,15 @@ public class MainActivity extends AppCompatActivity {
                 mDataLoader.refreshMainActivity();
             }
         });
+
+        FloatingActionButton addGameFab = findViewById(R.id.add_game_fab);
+        addGameFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -55,82 +67,19 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch(item.getItemId()) {
             case R.id.main_activity_menu_prefs:
-                break;
+                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(intent);
+                return true;
             case R.id.main_activity_menu_refresh:
                 mSwipeRefreshLayout.setRefreshing(true);
                 mDataLoader.refreshMainActivity();
-                break;
+                return true;
             default:
-                break;
-        }
-
-        if(item.getItemId() == R.id.main_activity_menu_prefs) {
-            Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
-            startActivity(intent);
-            return true;
-        } else {
-            return super.onOptionsItemSelected(item);
+                return super.onOptionsItemSelected(item);
         }
     }
 
     public DataLoader getDataLoader() {
         return mDataLoader;
     }
-
-    /*public class LoadGames extends AsyncTask<Context, Void, List<Game>> {
-        @Override
-        protected List<Game> doInBackground(Context... c) {
-            List<Game> gameList = Game.readGames(c[0]);
-            if(gameList == null || gameList.size() < 1) runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    findViewById(R.id.tv_no_games).setVisibility(View.VISIBLE);
-                }
-            });
-            else runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    findViewById(R.id.tv_no_games).setVisibility(View.GONE);
-                }
-            });
-            return gameList;
-        }
-
-        @Override
-        protected void onPostExecute(List<Game> games) {
-            mAdapter = new MyAdapter(games, MainActivity.this);
-            ((MyAdapter) mAdapter).setDeleteClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(final Game item) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setTitle(R.string.delete_game);
-                    builder.setMessage(R.string.confirm_delete_game);
-                    builder.setPositiveButton("Ja", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                            item.removeGame(MainActivity.this);
-                            new LoadGames().execute(MainActivity.this);
-                        }
-                    });
-                    builder.setNegativeButton("Nein", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    builder.create().show();
-                }
-            });
-            ((MyAdapter) mAdapter).setStartClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(Game item) {
-                    Intent intent = new Intent(MainActivity.this, GameActivity.class);
-                    intent.putExtra("game", item);
-                    MainActivity.this.startActivity(intent);
-                }
-            });
-            mRecyclerView.setAdapter(mAdapter);
-        }
-    }*/
 }

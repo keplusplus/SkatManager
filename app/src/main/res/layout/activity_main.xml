@@ -1,54 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/swipe_refresh_layout">
+    android:layout_height="match_parent">
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MainActivity">
+        android:id="@+id/swipe_refresh_layout">
 
-        <LinearLayout
+        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="10dp">
+            android:layout_height="match_parent"
+            tools:context=".MainActivity">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/tv_no_games"
-                android:text="@string/no_games"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:textStyle="italic"
-                android:textAlignment="center"
-                android:visibility="gone"/>
+                android:orientation="vertical"
+                android:padding="10dp">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <com.skydoves.androidveil.VeilRecyclerFrameView
+                <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:id="@+id/my_recycler_view"
-                    android:nestedScrollingEnabled="false"
-                    android:layout_centerInParent="true"
-                    app:veilFrame_layout="@layout/skeleton_row"
-                    app:veilFrame_veiled="true"
-                    app:veilFrame_shimmerEnable="true"
-                    app:veilFrame_highlightColor="@color/gray"
-                    app:veilFrame_baseAlpha="0.6"
-                    app:veilFrame_highlightAlpha="1.0"
-                    app:veilFrame_radius="8dp" />
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tv_no_games"
+                    android:text="@string/no_games"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:textStyle="italic"
+                    android:textAlignment="center"
+                    android:visibility="gone"/>
 
-            </RelativeLayout>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-        </LinearLayout>
-    </ScrollView>
+                    <com.skydoves.androidveil.VeilRecyclerFrameView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:id="@+id/my_recycler_view"
+                        android:nestedScrollingEnabled="false"
+                        android:layout_centerInParent="true"
+                        app:veilFrame_layout="@layout/skeleton_row"
+                        app:veilFrame_veiled="true"
+                        app:veilFrame_shimmerEnable="true"
+                        app:veilFrame_highlightColor="@color/gray"
+                        app:veilFrame_baseAlpha="0.6"
+                        app:veilFrame_highlightAlpha="1.0"
+                        app:veilFrame_radius="8dp" />
 
-</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                </RelativeLayout>
+
+            </LinearLayout>
+
+        </ScrollView>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_game_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:src="@drawable/ic_baseline_add_24"
+        android:layout_margin="16dp"/>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

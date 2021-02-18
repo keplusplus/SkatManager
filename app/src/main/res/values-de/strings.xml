@@ -50,4 +50,5 @@
     <string name="server_error_details">Der Server ist zurzeit nicht erreichbar, bitte versuchen Sie es später noch einmal oder deaktivieren Sie den Netzwerk-Modus in den Einstellungen.</string>
     <string name="not_connected">Nicht verbunden</string>
     <string name="not_connected_details">Es werden nur lokal gespeicherte Spiele angezeigt.</string>
+    <string name="games">Spiele</string>
 </resources>

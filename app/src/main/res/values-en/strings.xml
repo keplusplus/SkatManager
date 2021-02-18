@@ -50,4 +50,5 @@
     <string name="server_error_details">The server is currently not reachable, please try again later or disable networking in the preferences.</string>
     <string name="not_connected">Not connected</string>
     <string name="not_connected_details">Showing only local saved games.</string>
+    <string name="games">Games</string>
 </resources>

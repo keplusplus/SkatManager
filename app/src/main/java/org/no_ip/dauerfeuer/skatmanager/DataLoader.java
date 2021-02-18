@@ -62,7 +62,7 @@ public class DataLoader {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(c));
         mAdapter = new MyAdapter(mGames, c);
         mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.addVeiledItems(3);
+        mRecyclerView.addVeiledItems(3); // TODO: Veiled items impact scrolling range, even when invisible
         mRecyclerView.unVeil();
     }
 
