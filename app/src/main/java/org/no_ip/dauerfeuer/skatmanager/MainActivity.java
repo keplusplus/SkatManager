@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         addGameFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                Intent intent = new Intent(MainActivity.this, AddGameActivity.class);
                 startActivity(intent);
             }
         });
