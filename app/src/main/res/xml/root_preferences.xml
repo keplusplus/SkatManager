@@ -6,6 +6,11 @@
             app:key="useOnline"
             app:title="@string/pref_useOnline" />
 
+        <EditTextPreference
+            app:key="serverAddress"
+            app:dependency="useOnline"
+            app:title="@string/server_address" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

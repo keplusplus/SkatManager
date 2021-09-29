@@ -55,4 +55,5 @@
     <string name="tab_online">Online</string>
     <string name="tab_local">Lokal</string>
     <string name="create">Erstellen</string>
+    <string name="server_address">Serveradresse</string>
 </resources>

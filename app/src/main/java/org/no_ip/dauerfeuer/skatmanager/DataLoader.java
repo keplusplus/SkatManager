@@ -49,10 +49,17 @@ public class DataLoader {
     private final VeilRecyclerFrameView mRecyclerView;
     private final RecyclerView.Adapter mAdapter;
 
+    private final SharedPreferences mSharedPreferences;
+
     public DataLoader(Context c) {
         this.c = c;
+
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(c);
+
         mQueue = Volley.newRequestQueue(c);
-        mBaseUrl = "http://10.0.2.2:8080/skat-api/v1";
+        String serverAddress = mSharedPreferences.getString("serverAddress", "http://10.0.2.2:8080/skat-api/v1");
+        if(serverAddress.charAt(serverAddress.length() - 1) == '/') mBaseUrl = serverAddress.substring(0, serverAddress.length() - 1);
+        else mBaseUrl = serverAddress;
 
         mGames = new ArrayList<>();
 
@@ -99,8 +106,7 @@ public class DataLoader {
     private class MainActivityRefresher extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... voids) {
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(c);
-            boolean online = sharedPreferences.getBoolean("useOnline", false);
+            boolean online = mSharedPreferences.getBoolean("useOnline", false);
 
             mGames.addAll(Game.readGames(c));
 
@@ -166,6 +172,7 @@ public class DataLoader {
                 mAdapter.notifyDataSetChanged();
                 showHideNoGamesTextView(mGames.size());
                 finishSwipeRefresh();
+                // TODO: Bug when refreshing after online mode has been disabled in preferences (thread issues)
                 mRecyclerView.unVeil();
             }
 
