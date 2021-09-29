@@ -55,6 +55,7 @@ public class Game implements Parcelable {
         this.mPlayedRoundGames = in.readInt();
         this.mGameIsDoppelkopf = in.readByte() != 0;
         this.mIsOnline = in.readByte() != 0;
+        mGameId = new byte[12];
         in.readByteArray(mGameId);
     }
 
@@ -95,6 +96,13 @@ public class Game implements Parcelable {
     }
 
     public void storeGame(Context context) {
+        if(mIsOnline) {
+            // Save online
+            // TODO: update the changed game online (http PUT?)
+            return;
+        }
+
+        // Save offline
         try {
             JSONObject parent = new JSONObject();
             parent.put("game_is_doppelkopf", mGameIsDoppelkopf);
